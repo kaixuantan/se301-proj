@@ -1,5 +1,7 @@
 package se301.project;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -57,9 +59,11 @@ public class Shelf {
         }
     }
 
-    public boolean clear() {
+    public Map<String, Integer> takeItem() {
         wLock.lock();
         try {
+           Map<String, Integer> item = new HashMap<>();
+            item.put(itemName, quantity);
             this.itemName = null;
             this.quantity = 0;
 
@@ -70,7 +74,7 @@ public class Shelf {
                 e.printStackTrace();
             }
 
-            return true;
+            return item;
         } finally {
             wLock.unlock();
         }
