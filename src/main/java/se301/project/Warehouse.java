@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class Warehouse {
-    private Map<Integer, Shelf> inventory;
+    private Map<Integer, Shelf> inventory = new HashMap<>();
 
     public String display() {
         StringBuilder sb = new StringBuilder();
@@ -23,6 +23,10 @@ public class Warehouse {
 
     private static class SingletonHelper {
         private static final Warehouse INSTANCE = new Warehouse();
+    }
+
+    public void clear() {
+        this.inventory.clear();
     }
 
     public static void main(String[] args) {

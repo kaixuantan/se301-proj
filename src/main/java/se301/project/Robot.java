@@ -10,10 +10,11 @@ public class Robot implements Runnable {
   private Warehouse warehouse;
   private List<Task> taskQueue;
 
-  public Robot(int id, List<Task> taskQueue) {
+  public Robot(int id, List<Task> taskQueue, Warehouse warehouse) {
     this.id = id;
     this.taskQueue = taskQueue;
-    this.warehouse = Warehouse.getInstance(); // singleton
+    // this.warehouse = Warehouse.getInstance(); // singleton
+    this.warehouse = warehouse;
   }
 
   public void setItemName(String itemName) {
@@ -32,10 +33,7 @@ public class Robot implements Runnable {
     }
 
     // get the item from the shelf
-    shelf.updateQty(shelf.getItemQty() - quantity);
-    System.out
-        .println("Robot " + id + " picked " + quantity + " of " + shelf.getItemName() + " from shelf " + shelfId
-            + ". Remaining: " + shelf.getItemQty());
+    shelf.deductQty(quantity);
 
   }
 

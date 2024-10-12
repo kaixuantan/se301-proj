@@ -20,12 +20,12 @@ public class Shelf {
         this.quantity = quantity;
     }
 
-    public boolean updateQty(int quantity) {
+    public boolean deductQty(int quantity) {
         wLock.lock();
         try {
             if (this.quantity < quantity) {
-                System.out.println("Item " + itemName + " is out of stock or insufficient quantity.");
-                return false;
+                System.out.println(itemName + " is out of stock or insufficient quantity.");
+                throw new IllegalArgumentException("Item " + itemName + " is out of stock or insufficient quantity.");
             }
     
             // Simulate a delay to simulate the time taken to pick the item
@@ -34,6 +34,8 @@ public class Shelf {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            this.quantity -= quantity;
+            System.out.println("Deducted " + quantity + " of " + itemName + " from shelf " + shelfId + ". Remaining: " + this.quantity);
             return true;
         } finally {
             wLock.unlock();
