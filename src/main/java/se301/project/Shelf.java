@@ -38,13 +38,32 @@ public class Shelf {
         }
     }
 
-    public boolean changeItem(String itemName, int quantity) {
+    public boolean putItem(String itemName, int quantity) {
         wLock.lock();
         try {
             this.itemName = itemName;
             this.quantity = quantity;
 
             // Simulate a delay to simulate the time taken to exchange the item
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return true;
+        } finally {
+            wLock.unlock();
+        }
+    }
+
+    public boolean clear() {
+        wLock.lock();
+        try {
+            this.itemName = null;
+            this.quantity = 0;
+
+            // Simulate a delay to simulate the time taken to clear the shelf
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

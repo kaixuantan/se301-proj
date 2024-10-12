@@ -17,6 +17,14 @@ public class Warehouse {
         return sb.toString();
     }
 
+    public static Warehouse getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
+
+    private static class SingletonHelper {
+        private static final Warehouse INSTANCE = new Warehouse();
+    }
+
     public static void main(String[] args) {
         // Create shared resources and robots
         Warehouse warehouse = new Warehouse();
