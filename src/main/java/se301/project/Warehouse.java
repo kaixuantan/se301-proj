@@ -28,25 +28,4 @@ public class Warehouse {
     public void clear() {
         this.inventory.clear();
     }
-
-    public static void main(String[] args) {
-        // Create shared resources and robots
-        Warehouse warehouse = new Warehouse();
-        Map<Integer, Shelf> inventory = new HashMap<>();
-        inventory.put(1, new Shelf(1, "ItemA", 10));
-        inventory.put(2, new Shelf(2, "ItemB", 10));
-        inventory.put(3, new Shelf(3, "ItemC", 10));
-        warehouse.setInventory(inventory);
-
-        // Robot tasks include picking items
-        // Robot robot1 = new Robot(1, shelves.get(0), "ItemA", 3);
-        // Robot robot2 = new Robot(2, shelves.get(0), "ItemA", 3);
-
-        // Run robots in parallel
-        // Thread robotThread1 = new Thread(robot1);
-        // Thread robotThread2 = new Thread(robot2);
-
-        // robotThread1.start();
-        // robotThread2.start();
-    }
 }
