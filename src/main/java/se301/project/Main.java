@@ -17,11 +17,11 @@ public class Main {
 
         for (int i = 0; i < 1000; i++) {
             final int idx = i;
-            
+
             // Modify inventory
             executorService.submit(() -> {
                 warehouse.getInventory().get(1).putItem(String.valueOf(idx), idx);
-                
+
                 String str = warehouse.getInventory().get(1).viewItem();
                 Pattern pattern = Pattern.compile("Item: (.+?) Quantity: (\\d+)");
                 Matcher matcher = pattern.matcher(str);

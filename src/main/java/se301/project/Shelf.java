@@ -27,11 +27,12 @@ public class Shelf {
                 System.out.println(itemName + " is out of stock or insufficient quantity.");
                 return false;
             }
-    
+
             delay();
 
             this.quantity -= quantity;
-            System.out.println("Deducted " + quantity + " of " + itemName + " from shelf " + shelfId + ". Remaining: " + this.quantity);
+            System.out.println("Deducted " + quantity + " of " + itemName + " from shelf " + shelfId + ". Remaining: "
+                    + this.quantity);
             return true;
         } finally {
             wLock.unlock();
@@ -55,7 +56,7 @@ public class Shelf {
     public Map<String, Integer> takeItem() {
         wLock.lock();
         try {
-           Map<String, Integer> item = new HashMap<>();
+            Map<String, Integer> item = new HashMap<>();
             item.put(itemName, quantity);
             this.itemName = null;
             this.quantity = 0;
@@ -107,4 +108,3 @@ public class Shelf {
         }
     }
 }
-
