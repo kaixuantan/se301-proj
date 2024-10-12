@@ -14,7 +14,6 @@ public class Robot implements Runnable {
     this.id = id;
     this.taskQueue = taskQueue;
     this.warehouse = Warehouse.getInstance(); // singleton
-    // this.warehouse = warehouse;
   }
 
   public void setItemName(String itemName) {

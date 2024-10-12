@@ -25,15 +25,11 @@ public class Shelf {
         try {
             if (this.quantity < quantity) {
                 System.out.println(itemName + " is out of stock or insufficient quantity.");
-                throw new IllegalArgumentException("Item " + itemName + " is out of stock or insufficient quantity.");
+                return false;
             }
     
-            // Simulate a delay to simulate the time taken to pick the item
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            delay();
+
             this.quantity -= quantity;
             System.out.println("Deducted " + quantity + " of " + itemName + " from shelf " + shelfId + ". Remaining: " + this.quantity);
             return true;
@@ -48,12 +44,7 @@ public class Shelf {
             this.itemName = itemName;
             this.quantity = quantity;
 
-            // Simulate a delay to simulate the time taken to exchange the item
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            delay();
 
             return true;
         } finally {
@@ -69,12 +60,7 @@ public class Shelf {
             this.itemName = null;
             this.quantity = 0;
 
-            // Simulate a delay to simulate the time taken to clear the shelf
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            delay();
 
             return item;
         } finally {
@@ -102,6 +88,23 @@ public class Shelf {
 
     public int getShelfId() {
         return shelfId;
+    }
+
+    public String viewItem() {
+        rLock.lock();
+        try {
+            return "Item: " + itemName + " Quantity: " + quantity;
+        } finally {
+            rLock.unlock();
+        }
+    }
+
+    private void delay() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
