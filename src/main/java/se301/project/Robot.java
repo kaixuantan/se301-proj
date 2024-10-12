@@ -10,11 +10,11 @@ public class Robot implements Runnable {
   private Warehouse warehouse;
   private List<Task> taskQueue;
 
-  public Robot(int id, List<Task> taskQueue, Warehouse warehouse) {
+  public Robot(int id, List<Task> taskQueue) {
     this.id = id;
     this.taskQueue = taskQueue;
-    // this.warehouse = Warehouse.getInstance(); // singleton
-    this.warehouse = warehouse;
+    this.warehouse = Warehouse.getInstance(); // singleton
+    // this.warehouse = warehouse;
   }
 
   public void setItemName(String itemName) {
@@ -33,7 +33,10 @@ public class Robot implements Runnable {
     }
 
     // get the item from the shelf
-    shelf.deductQty(quantity);
+    boolean deducted = shelf.deductQty(quantity);
+    if (!deducted) {
+      throw new IllegalArgumentException("Item " + shelf.getItemName() + " is out of stock or insufficient quantity.");
+    }
 
   }
 
