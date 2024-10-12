@@ -1,61 +1,82 @@
 package se301.project;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.List;
 
 public class Robot implements Runnable {
-    private int id;
-    private Shelf shelf;
-    private ChargingStation chargingStation;
-    private Lock robotLock = new ReentrantLock();
-    private String itemName;
-    private int quantity;
+  private int id;
+  private String itemName = "";
+  private int quantity = 0;
+  private Warehouse warehouse;
+  private List<Task> taskQueue;
 
+  public Robot(int id, List<Task> taskQueue) {
+    this.id = id;
+    this.taskQueue = taskQueue;
+    this.warehouse = Warehouse.getInstance(); // singleton
+  }
 
-    public Robot(int id, Shelf shelf, ChargingStation chargingStation, String itemName, int quantity) {
-        this.id = id;
-        this.shelf = shelf;
-        this.chargingStation = chargingStation;
-        this.itemName = itemName;
-        this.quantity = quantity;
+  public void setItemName(String itemName) {
+    this.itemName = itemName;
+  }
+
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
+
+  public void pickItemFromShelf(int shelfId, int quantity) {
+    Shelf shelf = warehouse.getInventory().get(shelfId);
+    if (shelf == null) {
+      System.out.println("Shelf " + shelfId + " does not exist.");
+      return;
     }
 
-    public void pickItemFromShelf() throws InterruptedException {
-        if (shelf.getShelfLock().tryLock()) {
-            try {
-                System.out.println("Robot " + id + " is picking " + itemName + " from Shelf " + shelf.getShelfId());
-                Thread.sleep(1000); // Simulate time to pick item
-            } finally {
-                shelf.getShelfLock().unlock();
-            }
-        } else {
-            System.out.println("Robot " + id + " could not access Shelf " + shelf.getShelfId());
-        }
+    // get the item from the shelf
+    shelf.updateQty(shelf.getItemQty() - quantity);
+    System.out
+        .println("Robot " + id + " picked " + quantity + " of " + shelf.getItemName() + " from shelf " + shelfId
+            + ". Remaining: " + shelf.getItemQty());
+
+  }
+
+  public void exchangeItemBetweenShelf(int shelfId1, int shelfId2) {
+    Shelf shelf1 = warehouse.getInventory().get(shelfId1);
+    Shelf shelf2 = warehouse.getInventory().get(shelfId2);
+    if (shelf1 == null || shelf2 == null) {
+      System.out.println("Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.");
+      return;
     }
 
-    public void chargeBattery() throws InterruptedException {
-        if (chargingStation.getChargingLock().tryLock()) {
-            try {
-                System.out.println("Robot " + id + " is charging at Station " + chargingStation.getStationId());
-                Thread.sleep(1000); // Simulate charging time
-            } finally {
-                chargingStation.getChargingLock().unlock();
-            }
-        } else {
-            System.out.println("Robot " + id + " could not access Charging Station " + chargingStation.getStationId());
-        }
+    // exchange the item between the shelves
+    if (shelf1.getItemQty() == 0 || shelf1.getItemName() == null) {
+      System.out.println("Shelf " + shelfId1 + " is empty.");
+      return;
     }
 
-    @Override
-    public void run() {
-        try {
-            // Trying to access shelf and charging station simultaneously (potential deadlock)
-            pickItemFromShelf();
-            chargeBattery();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    Map<String, Integer> item1 = shelf1.takeItem();
+
+    // check if there is item in shelf2
+    if (shelf2.getItemQty() != 0 && shelf2.getItemName() != null) {
+      System.out.println("Shelf " + shelfId2 + " is not empty.");
+      return;
     }
+
+    shelf2.putItem(item1.keySet().iterator().next(), item1.values().iterator().next());
+
+    // print the exchange
+    System.out.println("Robot " + id + " has put items from shelf " + shelfId1 + " to shelf " + shelfId2);
+  }
+
+  @Override
+  public void run() {
+    for (Task task : taskQueue) {
+      if (task instanceof PickTask) {
+        PickTask pickTask = (PickTask) task;
+        pickItemFromShelf(pickTask.getShelfId(), pickTask.getQuantity());
+      } else if (task instanceof ExchangeTask) {
+        ExchangeTask exchangeTask = (ExchangeTask) task;
+        exchangeItemBetweenShelf(exchangeTask.getShelfId(), exchangeTask.getShelfId2());
+      }
+    }
+  }
 }
