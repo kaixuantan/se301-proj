@@ -19,17 +19,18 @@ public class PickTask implements Task {
   }
 
   @Override
-  public void execute() {
+  public String execute() {
     Shelf shelf = warehouse.getInventory().get(shelfId);
     if (shelf == null) {
-      System.out.println("Shelf " + shelfId + " does not exist.");
-      return;
+       return "Shelf " + shelfId + " does not exist.";
     }
 
     // get the item from the shelf
     boolean deducted = shelf.deductQty(quantity);
     if (!deducted) {
       throw new IllegalArgumentException("Item " + shelf.getItemName() + " is out of stock or insufficient quantity.");
+    } else {
+      return "Picked " + quantity + " of " + shelf.getItemName() + " from shelf " + shelfId;
     }
   }
 

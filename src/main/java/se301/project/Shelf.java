@@ -36,8 +36,6 @@ public class Shelf {
       delay();
 
       this.quantity -= quantity;
-      System.out.println("Deducted " + quantity + " of " + itemName + " from shelf " + shelfId + ". Remaining: "
-          + this.quantity);
       return true;
     } finally {
       wLock.unlock();

@@ -13,7 +13,7 @@ public class ExchangeTask implements Task {
   }
 
   @Override
-  public void execute() {
+  public String execute() {
     Shelf shelf1 = warehouse.getInventory().get(shelfId1);
     Shelf shelf2 = warehouse.getInventory().get(shelfId2);
 
@@ -29,20 +29,18 @@ public class ExchangeTask implements Task {
     second.getWriteLock().lock();
     try {
       if (shelf1 == null || shelf2 == null) {
-        System.out.println("Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.");
-        return;
+        return "Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.";
       }
 
       // exchange the items between the shelves
       Map<String, Integer> item1 = shelf1.takeItem();
-      System.out.println("Robot took " + item1.values().iterator().next() + " of "
-          + item1.keySet().iterator().next() + " from shelf " + shelfId1);
       Map<String, Integer> item2 = shelf2.takeItem();
-      System.out.println("Robot took " + item2.values().iterator().next() + " of "
-          + item2.keySet().iterator().next() + " from shelf " + shelfId2);
 
       shelf1.putItem(item2.keySet().iterator().next(), item2.values().iterator().next());
       shelf2.putItem(item1.keySet().iterator().next(), item1.values().iterator().next());
+      return "Swapped " + item1.values().iterator().next() + " of " + item1.keySet().iterator().next() + " from shelf "
+          + shelfId1 + " with " + item2.values().iterator().next() + " of " + item2.keySet().iterator().next()
+          + " from shelf " + shelfId2;
     } finally {
       first.getWriteLock().unlock();
       second.getWriteLock().unlock();
