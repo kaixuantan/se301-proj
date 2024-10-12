@@ -163,7 +163,5 @@ public class ConcurrencyTest {
 
     executorService.shutdown();
     executorService.awaitTermination(60, TimeUnit.SECONDS);
-
-
   }
 }
