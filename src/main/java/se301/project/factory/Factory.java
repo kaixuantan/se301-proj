@@ -1,5 +1,11 @@
 package se301.project.factory;
 
-public interface Factory<T, K> {
-    T create(K arg);
+/**
+ * Factory interface for creating objects.
+ *
+ * @param <T> the type of object to create
+ * @param <U> the type of argument to pass to the factory
+ */
+public interface Factory<T, U> {
+    T create(U arg);
 }

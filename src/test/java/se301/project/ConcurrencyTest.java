@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se301.project.robot.RobotImpl;
+import se301.project.shelf.ShelfImpl;
 import se301.project.task.ExchangeTask;
 import se301.project.task.PickTask;
 import se301.project.task.Task;
@@ -41,7 +42,7 @@ public class ConcurrencyTest {
   public void concurrentPickItem_whenCheckInventory_InventoryConsistent() throws InterruptedException {
     int threadCount = 50;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-    warehouseGood.getInventory().put(1, new Shelf(1, "ItemA", 100));
+    warehouseGood.getInventory().put(1, new ShelfImpl(1, "ItemA", 100));
 
     for (int i = 0; i < 100; i++) {
       Task pickItem = new PickTask(1, 1, warehouseGood);
@@ -61,7 +62,7 @@ public class ConcurrencyTest {
   public void concurrentPickItem_whenNotEnoughStock_DoesNotDeduct() throws InterruptedException {
     int threadCount = 10;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-    warehouseGood.getInventory().put(1, new Shelf(1, "ItemA", 90));
+    warehouseGood.getInventory().put(1, new ShelfImpl(1, "ItemA", 90));
     List<Future<?>> futures = new ArrayList<>();
 
     for (int i = 0; i < threadCount; i++) {
@@ -95,7 +96,7 @@ public class ConcurrencyTest {
   // comment out the readLock in Shelf.viewItem() to make the test fail
   // comment out the delay in Shelf.putItem() to make the test faster
   public void concurrentReadWriteToShelf_whenCheckShelf_ShelfDataConsistent() throws InterruptedException {
-    warehouseGood.getInventory().put(1, new Shelf(1, "ItemA", 100));
+    warehouseGood.getInventory().put(1, new ShelfImpl(1, "ItemA", 100));
 
     int threadCount = 50;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
@@ -142,9 +143,9 @@ public class ConcurrencyTest {
   // comment our line 57 to 60 in Robot.exchangeItemBetweenShelf() to make the test fail (deadlock)
   // comment out delay() in Shelf.takeItem() and Shelf.putItem() to make the test faster
   public void concurrentExchangeItem_NoDeadlocks() throws InterruptedException {
-    warehouseGood.getInventory().put(1, new Shelf(1, "ItemA", 100));
-    warehouseGood.getInventory().put(2, new Shelf(2, "ItemB", 50));
-    warehouseGood.getInventory().put(3, new Shelf(3, "ItemC", 20));
+    warehouseGood.getInventory().put(1, new ShelfImpl(1, "ItemA", 100));
+    warehouseGood.getInventory().put(2, new ShelfImpl(2, "ItemB", 50));
+    warehouseGood.getInventory().put(3, new ShelfImpl(3, "ItemC", 20));
 
     int threadCount = 50;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);

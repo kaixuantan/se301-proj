@@ -5,6 +5,7 @@ import se301.project.factory.RobotFactory;
 import se301.project.factory.TaskFactory;
 import se301.project.factory.WarehouseFactory;
 import se301.project.robot.Robot;
+import se301.project.shelf.ShelfImpl;
 import se301.project.task.Task;
 import se301.project.warehouse.Warehouse;
 
@@ -46,10 +47,10 @@ public class Main {
 
     private static void setUpWarehouse(Warehouse warehouse) {
         warehouse.clear();
-        warehouse.getInventory().put(1, new Shelf(1, "ItemA", 1000));
-        warehouse.getInventory().put(2, new Shelf(2, "ItemB", 500));
-        warehouse.getInventory().put(3, new Shelf(3, "ItemC", 50));
-        warehouse.getInventory().put(4, new Shelf(4, "ItemD", 100));
+        warehouse.getInventory().put(1, new ShelfImpl(1, "ItemA", 1000));
+        warehouse.getInventory().put(2, new ShelfImpl(2, "ItemB", 500));
+        warehouse.getInventory().put(3, new ShelfImpl(3, "ItemC", 50));
+        warehouse.getInventory().put(4, new ShelfImpl(4, "ItemD", 100));
     }
 
     private static void setUpTasks(int threadCount, ExecutorService executorService, Factory<Task, String> taskFactory) {

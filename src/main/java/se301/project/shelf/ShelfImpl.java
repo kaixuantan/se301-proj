@@ -1,4 +1,4 @@
-package se301.project;
+package se301.project.shelf;
 
 import lombok.Getter;
 
@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
-public class Shelf {
+public class ShelfImpl implements Shelf {
   private final ReadWriteLock shelfLock = new ReentrantReadWriteLock();
   @Getter
   private final Lock writeLock = shelfLock.writeLock();
@@ -20,12 +20,13 @@ public class Shelf {
   private String itemName;
   private int quantity;
 
-  public Shelf(int shelfId, String itemName, Integer quantity) {
+  public ShelfImpl(int shelfId, String itemName, Integer quantity) {
     this.shelfId = shelfId;
     this.itemName = itemName;
     this.quantity = quantity;
   }
 
+  @Override
   public boolean deductQty(int quantity) {
     writeLock.lock();
     try {
@@ -43,6 +44,7 @@ public class Shelf {
     }
   }
 
+  @Override
   public boolean putItem(String itemName, int quantity) {
     writeLock.lock();
     try {
@@ -57,6 +59,7 @@ public class Shelf {
     }
   }
 
+  @Override
   public Map<String, Integer> takeItem() {
     writeLock.lock();
     try {
@@ -73,6 +76,7 @@ public class Shelf {
     }
   }
 
+  @Override
   public String getItemName() {
     readLock.lock();
     try {
@@ -82,6 +86,7 @@ public class Shelf {
     }
   }
 
+  @Override
   public int getItemQty() {
     readLock.lock();
     try {
@@ -91,6 +96,7 @@ public class Shelf {
     }
   }
 
+  @Override
   public String viewItem() {
     readLock.lock();
     try {

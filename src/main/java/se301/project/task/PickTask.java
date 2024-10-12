@@ -2,7 +2,7 @@ package se301.project.task;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import se301.project.Shelf;
+import se301.project.shelf.Shelf;
 import se301.project.warehouse.Warehouse;
 
 @Getter

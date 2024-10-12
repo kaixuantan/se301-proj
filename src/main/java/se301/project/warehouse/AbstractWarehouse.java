@@ -1,7 +1,7 @@
 package se301.project.warehouse;
 
 import lombok.Getter;
-import se301.project.Shelf;
+import se301.project.shelf.Shelf;
 
 import java.util.HashMap;
 import java.util.Map;

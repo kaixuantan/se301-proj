@@ -2,7 +2,7 @@ package se301.project.task;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import se301.project.Shelf;
+import se301.project.shelf.Shelf;
 import se301.project.warehouse.Warehouse;
 
 import java.util.Map;
@@ -16,30 +16,30 @@ public class ExchangeTask implements Task {
 
   @Override
   public String execute() {
-    Shelf shelf1 = warehouse.getInventory().get(shelfId1);
-    Shelf shelf2 = warehouse.getInventory().get(shelfId2);
+    Shelf shelfImpl1 = warehouse.getInventory().get(shelfId1);
+    Shelf shelfImpl2 = warehouse.getInventory().get(shelfId2);
 
-    Shelf firstShelf = shelf1;
-    Shelf secondShelf = shelf2;
+    Shelf firstShelf = shelfImpl1;
+    Shelf secondShelf = shelfImpl2;
 
-    if (shelf1.hashCode() > shelf2.hashCode()) {
-      firstShelf = shelf2;
-      secondShelf = shelf1;
+    if (shelfImpl1.hashCode() > shelfImpl2.hashCode()) {
+      firstShelf = shelfImpl2;
+      secondShelf = shelfImpl1;
     }
 
     firstShelf.getWriteLock().lock();
     secondShelf.getWriteLock().lock();
     try {
-      if (shelf1 == null || shelf2 == null) {
+      if (shelfImpl1 == null || shelfImpl2 == null) {
         return "Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.";
       }
 
       // exchange the items between the shelves
-      Map<String, Integer> item1 = shelf1.takeItem();
-      Map<String, Integer> item2 = shelf2.takeItem();
+      Map<String, Integer> item1 = shelfImpl1.takeItem();
+      Map<String, Integer> item2 = shelfImpl2.takeItem();
 
-      shelf1.putItem(item2.keySet().iterator().next(), item2.values().iterator().next());
-      shelf2.putItem(item1.keySet().iterator().next(), item1.values().iterator().next());
+      shelfImpl1.putItem(item2.keySet().iterator().next(), item2.values().iterator().next());
+      shelfImpl2.putItem(item1.keySet().iterator().next(), item1.values().iterator().next());
       return "Swapped " + item1.values().iterator().next() + " of " + item1.keySet().iterator().next() + " from shelf "
           + shelfId1 + " with " + item2.values().iterator().next() + " of " + item2.keySet().iterator().next()
           + " from shelf " + shelfId2;

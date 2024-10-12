@@ -1,6 +1,6 @@
 package se301.project.warehouse;
 
-import se301.project.Shelf;
+import se301.project.shelf.Shelf;
 
 import java.util.Map;
 
