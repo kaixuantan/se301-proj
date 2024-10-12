@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Robot implements Runnable {
   private int id;
-  private String itemName = "";
+  private String itemName = null;
   private int quantity = 0;
   private Warehouse warehouse;
   private List<Task> taskQueue;
@@ -22,6 +22,14 @@ public class Robot implements Runnable {
 
   public void setQuantity(int quantity) {
     this.quantity = quantity;
+  }
+
+  public String getItemName() {
+    return itemName;
+  }
+
+  public int getQuantity() {
+    return quantity;
   }
 
   public void pickItemFromShelf(int shelfId, int quantity) {
@@ -42,29 +50,35 @@ public class Robot implements Runnable {
   public void exchangeItemBetweenShelf(int shelfId1, int shelfId2) {
     Shelf shelf1 = warehouse.getInventory().get(shelfId1);
     Shelf shelf2 = warehouse.getInventory().get(shelfId2);
-    if (shelf1 == null || shelf2 == null) {
-      System.out.println("Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.");
-      return;
+
+    Shelf first = shelf1;
+    Shelf second = shelf2;
+
+    if (shelf1.hashCode() > shelf2.hashCode()) {
+      first = shelf2;
+      second = shelf1;
     }
 
-    // exchange the item between the shelves
-    if (shelf1.getItemQty() == 0 || shelf1.getItemName() == null) {
-      System.out.println("Shelf " + shelfId1 + " is empty.");
-      return;
+    synchronized (first) {
+      synchronized (second) {
+
+        if (shelf1 == null || shelf2 == null) {
+          System.out.println("Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.");
+          return;
+        }
+
+        // exchange the items between the shelves
+        Map<String, Integer> item1 = shelf1.takeItem();
+        System.out.println("Robot " + id + " took " + item1.values().iterator().next() + " of "
+            + item1.keySet().iterator().next() + " from shelf " + shelfId1);
+        Map<String, Integer> item2 = shelf2.takeItem();
+        System.out.println("Robot " + id + " took " + item2.values().iterator().next() + " of "
+            + item2.keySet().iterator().next() + " from shelf " + shelfId2);
+
+        shelf1.putItem(item2.keySet().iterator().next(), item2.values().iterator().next());
+        shelf2.putItem(item1.keySet().iterator().next(), item1.values().iterator().next());
+      }
     }
-
-    Map<String, Integer> item1 = shelf1.takeItem();
-
-    // check if there is item in shelf2
-    if (shelf2.getItemQty() != 0 && shelf2.getItemName() != null) {
-      System.out.println("Shelf " + shelfId2 + " is not empty.");
-      return;
-    }
-
-    shelf2.putItem(item1.keySet().iterator().next(), item1.values().iterator().next());
-
-    // print the exchange
-    System.out.println("Robot " + id + " has put items from shelf " + shelfId1 + " to shelf " + shelfId2);
   }
 
   @Override
