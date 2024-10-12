@@ -1,6 +1,5 @@
 package se301.project;
 
-import java.util.Map;
 import java.util.List;
 
 public class Robot implements Runnable {

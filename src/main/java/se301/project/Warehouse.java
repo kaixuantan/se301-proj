@@ -1,12 +1,13 @@
 package se301.project;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Data;
 
 @Data
 public class Warehouse {
-    private Map<Integer, Shelf> inventory = new HashMap<>();
+    private Map<Integer, Shelf> inventory = new ConcurrentHashMap<>();
 
     public String display() {
         StringBuilder sb = new StringBuilder();

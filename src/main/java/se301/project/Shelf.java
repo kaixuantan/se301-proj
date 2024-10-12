@@ -20,6 +20,10 @@ public class Shelf {
     this.itemName = itemName;
     this.quantity = quantity;
   }
+
+  public Lock getWriteLock() {
+    return wLock;
+  }
   
   public boolean deductQty(int quantity) {
     wLock.lock();
