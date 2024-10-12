@@ -5,9 +5,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Shelf {
     private int shelfId;
+    private String itemName;
+    private int quantity;
     private Lock shelfLock = new ReentrantLock();
 
-    public Shelf(int shelfId) {
+    public Shelf(int shelfId, String itemName, int quantity) {
         this.shelfId = shelfId;
     }
 

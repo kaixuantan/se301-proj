@@ -12,7 +12,6 @@ public class Robot implements Runnable {
     private Lock robotLock = new ReentrantLock();
     private String itemName;
     private int quantity;
-    private Map<String, Integer> localInventory = new HashMap<>();
 
 
     public Robot(int id, Shelf shelf, ChargingStation chargingStation, String itemName, int quantity) {
@@ -26,8 +25,7 @@ public class Robot implements Runnable {
     public void pickItemFromShelf() throws InterruptedException {
         if (shelf.getShelfLock().tryLock()) {
             try {
-                localInventory.put(itemName, localInventory.getOrDefault(itemName, 0) + quantity);
-                System.out.println("Robot " + id + " is picking item from Shelf " + shelf.getShelfId());
+                System.out.println("Robot " + id + " is picking " + itemName + " from Shelf " + shelf.getShelfId());
                 Thread.sleep(1000); // Simulate time to pick item
             } finally {
                 shelf.getShelfLock().unlock();
