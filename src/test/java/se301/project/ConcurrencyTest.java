@@ -102,7 +102,7 @@ public class ConcurrencyTest {
       futures.add(
           executorService.submit(() -> {
             warehouse.getInventory().get(1).putItem(String.valueOf(idx), idx);
-
+            // thread switch here will cause the viewItem() to read inconsistent data
             String str = warehouse.getInventory().get(1).viewItem();
             Pattern pattern = Pattern.compile("Item: (.+?) Quantity: (\\d+)");
             Matcher matcher = pattern.matcher(str);
