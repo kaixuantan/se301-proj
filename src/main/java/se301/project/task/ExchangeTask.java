@@ -1,32 +1,34 @@
-package se301.project;
+package se301.project.task;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import se301.project.Shelf;
+import se301.project.warehouse.Warehouse;
 
 import java.util.Map;
 
+@Getter
+@RequiredArgsConstructor
 public class ExchangeTask implements Task {
-  private int shelfId1;
-  private int shelfId2;
-  private Warehouse warehouse = Warehouse.getInstance();
-
-  public ExchangeTask(int shelfId1, int shelfId2) {
-    this.shelfId1 = shelfId1;
-    this.shelfId2 = shelfId2;
-  }
+  private final int shelfId1;
+  private final int shelfId2;
+  private final Warehouse warehouse;
 
   @Override
   public String execute() {
     Shelf shelf1 = warehouse.getInventory().get(shelfId1);
     Shelf shelf2 = warehouse.getInventory().get(shelfId2);
 
-    Shelf first = shelf1;
-    Shelf second = shelf2;
+    Shelf firstShelf = shelf1;
+    Shelf secondShelf = shelf2;
 
     if (shelf1.hashCode() > shelf2.hashCode()) {
-      first = shelf2;
-      second = shelf1;
+      firstShelf = shelf2;
+      secondShelf = shelf1;
     }
 
-    first.getWriteLock().lock();
-    second.getWriteLock().lock();
+    firstShelf.getWriteLock().lock();
+    secondShelf.getWriteLock().lock();
     try {
       if (shelf1 == null || shelf2 == null) {
         return "Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.";
@@ -42,16 +44,8 @@ public class ExchangeTask implements Task {
           + shelfId1 + " with " + item2.values().iterator().next() + " of " + item2.keySet().iterator().next()
           + " from shelf " + shelfId2;
     } finally {
-      first.getWriteLock().unlock();
-      second.getWriteLock().unlock();
+      firstShelf.getWriteLock().unlock();
+      secondShelf.getWriteLock().unlock();
     }
-  }
-
-  public int getShelfId() {
-    return shelfId1;
-  }
-
-  public int getShelfId2() {
-    return shelfId2;
   }
 }

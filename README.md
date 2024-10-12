@@ -37,7 +37,7 @@ mvn clean install
 To run the project, execute the `Main` class. You can do this from the command line with the following command:
 
 ```bash
-mvn exec:java -Dexec.mainClass="se301.project.Main"
+mvn exec:java -Dexec.mainClass="se301.project.Main" -Dexec.args="good 50"
 ```
 
 ## Running Tests

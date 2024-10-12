@@ -1,9 +1,13 @@
 package se301.project;
 
 import org.junit.jupiter.api.Test;
+import se301.project.warehouse.WarehouseGood;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,12 +19,12 @@ public class SingletonTest {
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
-        Map<Integer, Warehouse> map = new ConcurrentHashMap<>(threadCount);
+        Map<Integer, WarehouseGood> map = new ConcurrentHashMap<>(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             executorService.submit(() -> {
-                map.put(index, Warehouse.getInstance());
+                map.put(index, WarehouseGood.getInstance());
             });
         }
 

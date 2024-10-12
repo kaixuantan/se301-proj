@@ -1,5 +1,7 @@
 package se301.project;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -8,12 +10,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 public class Shelf {
-  private int shelfId;
+  private final ReadWriteLock shelfLock = new ReentrantReadWriteLock();
+  @Getter
+  private final Lock writeLock = shelfLock.writeLock();
+  private final Lock readLock = shelfLock.readLock();
+
+  @Getter
+  private final int shelfId;
   private String itemName;
   private int quantity;
-  private ReadWriteLock shelfLock = new ReentrantReadWriteLock();
-  private Lock rLock = shelfLock.readLock();
-  private Lock wLock = shelfLock.writeLock();
 
   public Shelf(int shelfId, String itemName, Integer quantity) {
     this.shelfId = shelfId;
@@ -21,12 +26,8 @@ public class Shelf {
     this.quantity = quantity;
   }
 
-  public Lock getWriteLock() {
-    return wLock;
-  }
-  
   public boolean deductQty(int quantity) {
-    wLock.lock();
+    writeLock.lock();
     try {
       if (this.quantity < quantity) {
         System.out.println(itemName + " is out of stock or insufficient quantity.");
@@ -38,12 +39,12 @@ public class Shelf {
       this.quantity -= quantity;
       return true;
     } finally {
-      wLock.unlock();
+      writeLock.unlock();
     }
   }
 
   public boolean putItem(String itemName, int quantity) {
-    wLock.lock();
+    writeLock.lock();
     try {
       this.itemName = itemName;
       this.quantity = quantity;
@@ -52,12 +53,12 @@ public class Shelf {
 
       return true;
     } finally {
-      wLock.unlock();
+      writeLock.unlock();
     }
   }
 
   public Map<String, Integer> takeItem() {
-    wLock.lock();
+    writeLock.lock();
     try {
       Map<String, Integer> item = new HashMap<>();
       item.put(itemName, quantity);
@@ -68,38 +69,34 @@ public class Shelf {
 
       return item;
     } finally {
-      wLock.unlock();
+      writeLock.unlock();
     }
   }
 
   public String getItemName() {
-    rLock.lock();
+    readLock.lock();
     try {
       return itemName;
     } finally {
-      rLock.unlock();
+      readLock.unlock();
     }
   }
 
   public int getItemQty() {
-    rLock.lock();
+    readLock.lock();
     try {
       return quantity;
     } finally {
-      rLock.unlock();
+      readLock.unlock();
     }
   }
 
-  public int getShelfId() {
-    return shelfId;
-  }
-
   public String viewItem() {
-    rLock.lock();
+    readLock.lock();
     try {
       return "Item: " + itemName + " Quantity: " + quantity;
     } finally {
-      rLock.unlock();
+      readLock.unlock();
     }
   }
 

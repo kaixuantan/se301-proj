@@ -1,11 +1,14 @@
-package se301.project;
+package se301.project.warehouse;
+
+import lombok.Getter;
+import se301.project.Shelf;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class WarehouseBad {
-    private Map<Integer, Shelf> inventory = new HashMap<>();
-    private static WarehouseBad warehouseObj;
+@Getter
+public abstract class AbstractWarehouse implements Warehouse {
+    private final Map<Integer, Shelf> inventory = new HashMap<>();
 
     public String display() {
         StringBuilder sb = new StringBuilder();
@@ -16,10 +19,7 @@ public class WarehouseBad {
         return sb.toString();
     }
 
-    public static WarehouseBad getInstance() {
-        if (warehouseObj == null) {
-            warehouseObj = new WarehouseBad();
-        }
-        return warehouseObj;
+    public void clear() {
+        inventory.clear();
     }
 }

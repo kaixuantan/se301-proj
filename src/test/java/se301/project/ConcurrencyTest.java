@@ -1,34 +1,39 @@
 package se301.project;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import se301.project.robot.RobotImpl;
+import se301.project.task.ExchangeTask;
+import se301.project.task.PickTask;
+import se301.project.task.Task;
+import se301.project.warehouse.WarehouseGood;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.concurrent.Future;
-import java.util.ArrayList;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConcurrencyTest {
-  private Warehouse warehouse;
+  private WarehouseGood warehouseGood;
 
   @BeforeEach
   public void setUp() {
-    warehouse = Warehouse.getInstance();
-    warehouse.clear();
+    warehouseGood = WarehouseGood.getInstance();
+    warehouseGood.clear();
   }
 
   @AfterEach
   public void tearDown() {
-    warehouse.clear();
+    warehouseGood.clear();
   }
 
   @Test
@@ -36,34 +41,34 @@ public class ConcurrencyTest {
   public void concurrentPickItem_whenCheckInventory_InventoryConsistent() throws InterruptedException {
     int threadCount = 50;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-    warehouse.getInventory().put(1, new Shelf(1, "ItemA", 100));
+    warehouseGood.getInventory().put(1, new Shelf(1, "ItemA", 100));
 
     for (int i = 0; i < 100; i++) {
-      Task pickItem = new PickTask(1, 1);
+      Task pickItem = new PickTask(1, 1, warehouseGood);
       List<Task> taskQueue = Collections.singletonList(pickItem);
       executorService.submit(
-          new Robot(i, taskQueue));
+              new RobotImpl(i, taskQueue));
     }
 
     executorService.shutdown();
     boolean terminated = executorService.awaitTermination(60, TimeUnit.SECONDS);
     assertTrue(terminated);
 
-    assertEquals(0, warehouse.getInventory().get(1).getItemQty());
+    assertEquals(0, warehouseGood.getInventory().get(1).getItemQty());
   }
 
   @Test
   public void concurrentPickItem_whenNotEnoughStock_DoesNotDeduct() throws InterruptedException {
     int threadCount = 10;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-    warehouse.getInventory().put(1, new Shelf(1, "ItemA", 90));
+    warehouseGood.getInventory().put(1, new Shelf(1, "ItemA", 90));
     List<Future<?>> futures = new ArrayList<>();
 
     for (int i = 0; i < threadCount; i++) {
-      Task pickItem = new PickTask(1, 10);
+      Task pickItem = new PickTask(1, 10, warehouseGood);
       List<Task> taskQueue = Collections.singletonList(pickItem);
       futures.add(executorService.submit(
-          new Robot(i, taskQueue)));
+              new RobotImpl(i, taskQueue)));
     }
 
     executorService.shutdown();
@@ -83,14 +88,14 @@ public class ConcurrencyTest {
     }
 
     assertTrue(exceptionThrown, "Expected IllegalArgumentException was not thrown.");
-    assertEquals(0, warehouse.getInventory().get(1).getItemQty());
+    assertEquals(0, warehouseGood.getInventory().get(1).getItemQty());
   }
 
   @Test
   // comment out the readLock in Shelf.viewItem() to make the test fail
   // comment out the delay in Shelf.putItem() to make the test faster
   public void concurrentReadWriteToShelf_whenCheckShelf_ShelfDataConsistent() throws InterruptedException {
-    warehouse.getInventory().put(1, new Shelf(1, "ItemA", 100));
+    warehouseGood.getInventory().put(1, new Shelf(1, "ItemA", 100));
 
     int threadCount = 50;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
@@ -101,9 +106,9 @@ public class ConcurrencyTest {
       // Modify inventory
       futures.add(
           executorService.submit(() -> {
-            warehouse.getInventory().get(1).putItem(String.valueOf(idx), idx);
+            warehouseGood.getInventory().get(1).putItem(String.valueOf(idx), idx);
             // thread switch here will cause the viewItem() to read inconsistent data
-            String str = warehouse.getInventory().get(1).viewItem();
+            String str = warehouseGood.getInventory().get(1).viewItem();
             Pattern pattern = Pattern.compile("Item: (.+?) Quantity: (\\d+)");
             Matcher matcher = pattern.matcher(str);
 
@@ -137,9 +142,9 @@ public class ConcurrencyTest {
   // comment our line 57 to 60 in Robot.exchangeItemBetweenShelf() to make the test fail (deadlock)
   // comment out delay() in Shelf.takeItem() and Shelf.putItem() to make the test faster
   public void concurrentExchangeItem_NoDeadlocks() throws InterruptedException {
-    warehouse.getInventory().put(1, new Shelf(1, "ItemA", 100));
-    warehouse.getInventory().put(2, new Shelf(2, "ItemB", 50));
-    warehouse.getInventory().put(3, new Shelf(3, "ItemC", 20));
+    warehouseGood.getInventory().put(1, new Shelf(1, "ItemA", 100));
+    warehouseGood.getInventory().put(2, new Shelf(2, "ItemB", 50));
+    warehouseGood.getInventory().put(3, new Shelf(3, "ItemC", 20));
 
     int threadCount = 50;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
@@ -148,11 +153,11 @@ public class ConcurrencyTest {
     for (int i = 0; i < 50; i++) {
       int robotId = i + 1;
       executorService.submit(
-          new Robot(robotId, Collections.singletonList(new ExchangeTask(1, 2))));
+              new RobotImpl(robotId, Collections.singletonList(new ExchangeTask(1, 2, warehouseGood))));
       executorService.submit(
-          new Robot(robotId, Collections.singletonList(new ExchangeTask(2, 3))));
+              new RobotImpl(robotId, Collections.singletonList(new ExchangeTask(2, 3, warehouseGood))));
       executorService.submit(
-          new Robot(robotId, Collections.singletonList(new ExchangeTask(3, 1))));
+              new RobotImpl(robotId, Collections.singletonList(new ExchangeTask(3, 1, warehouseGood))));
     }
 
     executorService.shutdown();

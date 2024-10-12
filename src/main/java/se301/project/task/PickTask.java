@@ -1,22 +1,16 @@
-package se301.project;
+package se301.project.task;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import se301.project.Shelf;
+import se301.project.warehouse.Warehouse;
+
+@Getter
+@RequiredArgsConstructor
 public class PickTask implements Task {
-  private int shelfId;
-  private int quantity;
-  private Warehouse warehouse = Warehouse.getInstance();
-
-  public PickTask(int shelfId, int quantity) {
-    this.shelfId = shelfId;
-    this.quantity = quantity;
-  }
-
-  public int getShelfId() {
-    return shelfId;
-  }
-
-  public int getQuantity() {
-    return quantity;
-  }
+  private final int shelfId;
+  private final int quantity;
+  private final Warehouse warehouse;
 
   @Override
   public String execute() {
@@ -33,5 +27,4 @@ public class PickTask implements Task {
       return "Picked " + quantity + " of " + shelf.getItemName() + " from shelf " + shelfId;
     }
   }
-
 }
