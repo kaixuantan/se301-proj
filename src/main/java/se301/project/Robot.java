@@ -4,8 +4,6 @@ import java.util.List;
 
 public class Robot implements Runnable {
   private int id;
-  private String itemName = null;
-  private int quantity = 0;
   private List<Task> taskQueue;
 
   public Robot(int id, List<Task> taskQueue) {
@@ -13,20 +11,8 @@ public class Robot implements Runnable {
     this.taskQueue = taskQueue;
   }
 
-  public void setItemName(String itemName) {
-    this.itemName = itemName;
-  }
-
-  public void setQuantity(int quantity) {
-    this.quantity = quantity;
-  }
-
-  public String getItemName() {
-    return itemName;
-  }
-
-  public int getQuantity() {
-    return quantity;
+  public int getId() {
+    return id;
   }
 
   @Override
