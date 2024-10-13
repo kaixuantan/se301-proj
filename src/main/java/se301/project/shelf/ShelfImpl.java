@@ -50,9 +50,10 @@ public class ShelfImpl implements Shelf {
     writeLock.lock();
     try {
       this.itemName = itemName;
+      // thread switch here will cause the viewItem() 
+      // to read inconsistent data without a read lock
+    //   delay();
       this.quantity = quantity;
-
-      // delay();
 
       return true;
     } finally {

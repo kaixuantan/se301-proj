@@ -5,13 +5,13 @@ import se301.project.shelf.Shelf;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public abstract class AbstractWarehouse implements Warehouse {
-    private final Map<Integer, Shelf> inventory = new HashMap<>();
+    private final Map<Integer, Shelf> inventory = new ConcurrentHashMap<>();
 
     public String display() {
         // Get the keys and sort them

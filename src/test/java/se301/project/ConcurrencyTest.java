@@ -100,7 +100,7 @@ public class ConcurrencyTest {
     // comment out the readLock in Shelf.viewItem() to make the test fail
     // comment out the delay in Shelf.putItem() to make the test faster
     public void concurrentReadWriteToShelf_whenCheckShelf_ShelfDataConsistent() throws InterruptedException {
-        warehouse.getInventory().put(1, new ShelfImpl(1, "ItemA", 100));
+        warehouse.getInventory().put(1, new ShelfImpl(1, "Irrelevant", 0));
 
         int threadCount = 50;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
@@ -110,23 +110,24 @@ public class ConcurrencyTest {
             final int idx = i;
             // Modify inventory
             futures.add(
-                    executorService.submit(() -> {
-                        warehouse.getInventory().get(1).putItem(String.valueOf(idx), idx);
-                        // thread switch here will cause the viewItem() to read inconsistent data
-                        String str = warehouse.getInventory().get(1).viewItem();
-                        Pattern pattern = Pattern.compile("Item: (.+?) Quantity: (\\d+)");
-                        Matcher matcher = pattern.matcher(str);
+                executorService.submit(() -> {
+                    warehouse.getInventory().get(1).putItem(String.valueOf(idx), idx);
+                    
+                    String str = warehouse.getInventory().get(1).viewItem();
+                    System.out.println(str);
+                    Pattern pattern = Pattern.compile("Item: (.+?), Quantity: (\\d+)");
+                    Matcher matcher = pattern.matcher(str);
 
-                        if (matcher.find()) {
-                            String itemName = matcher.group(1);
-                            int quantity = Integer.parseInt(matcher.group(2));
-                            assertEquals(Integer.valueOf(itemName), quantity);
-                            if (Integer.valueOf(itemName) != quantity) {
-                                System.out.println("Inconsistent: " + itemName + " " + quantity);
-                            }
+                    if (matcher.find()) {
+                        String itemName = matcher.group(1);
+                        int quantity = Integer.parseInt(matcher.group(2));
+                        assertEquals(Integer.valueOf(itemName), quantity);
+                        if (Integer.valueOf(itemName) != quantity) {
+                            System.out.println("Inconsistent: " + itemName + " " + quantity);
                         }
-                    }));
-
+                    }
+                })
+            );
         }
 
         executorService.shutdown();
