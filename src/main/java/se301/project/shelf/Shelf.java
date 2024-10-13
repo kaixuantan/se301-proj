@@ -5,6 +5,7 @@ import java.util.concurrent.locks.Lock;
 
 public interface Shelf {
     Lock getWriteLock();
+    Lock getReadLock();
 
     boolean deductQty(int quantity);
 

@@ -13,6 +13,7 @@ public class ShelfImpl implements Shelf {
   private final ReadWriteLock shelfLock = new ReentrantReadWriteLock();
   @Getter
   private final Lock writeLock = shelfLock.writeLock();
+  @Getter
   private final Lock readLock = shelfLock.readLock();
 
   @Getter
@@ -100,7 +101,7 @@ public class ShelfImpl implements Shelf {
   public String viewItem() {
     readLock.lock();
     try {
-      return "Item: " + itemName + " Quantity: " + quantity;
+      return "Item: " + itemName + ", Quantity: " + quantity;
     } finally {
       readLock.unlock();
     }
