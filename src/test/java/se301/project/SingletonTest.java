@@ -1,12 +1,10 @@
 package se301.project;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import se301.project.factory.WarehouseFactory;
 import se301.project.warehouse.Warehouse;
-import se301.project.warehouse.WarehouseGood;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
