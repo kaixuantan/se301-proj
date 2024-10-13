@@ -27,11 +27,11 @@ public class TaskFactory implements Factory<Task, String> {
         }
     }
 
-    private Task createExchangeTask(int shelfId1, int shelfId2) {
+    public Task createExchangeTask(int shelfId1, int shelfId2) {
         return new ExchangeTask(shelfId1, shelfId2, warehouse);
     }
 
-    private Task createPickTask(int shelfId, int quantity) {
+    public Task createPickTask(int shelfId, int quantity) {
         return new PickTask(shelfId, quantity, warehouse);
     }
 
