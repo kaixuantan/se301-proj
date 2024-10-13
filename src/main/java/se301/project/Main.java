@@ -1,7 +1,6 @@
 package se301.project;
 
 import se301.project.factory.Factory;
-import se301.project.factory.RobotFactory;
 import se301.project.factory.TaskFactory;
 import se301.project.factory.WarehouseFactory;
 import se301.project.robot.Robot;
@@ -59,8 +58,8 @@ public class Main {
         warehouse.clear();
         warehouse.getInventory().put(1, new ShelfImpl(1, "ItemA", 1000));
         warehouse.getInventory().put(2, new ShelfImpl(2, "ItemB", 500));
-        warehouse.getInventory().put(3, new ShelfImpl(3, "ItemC", 50));
-        warehouse.getInventory().put(4, new ShelfImpl(4, "ItemD", 100));
+        warehouse.getInventory().put(3, new ShelfImpl(3, "ItemC", 100));
+        warehouse.getInventory().put(4, new ShelfImpl(4, "ItemD", 200));
     }
 
     private static void setUpTasks(int threadCount, int numTasksPerRobot, ExecutorService executorService, Factory<Task, String> taskFactory) {
@@ -71,9 +70,8 @@ public class Main {
             for (int j = 0; j < numTasksPerRobot; j++) {
                 taskQueue.add(taskFactory.create("random"));
             }
-
-            Factory<Robot, Integer> robotFactory = new RobotFactory(taskQueue);
-            Robot robot = robotFactory.create(robotId);
+            
+            Robot robot = new Robot(robotId, taskQueue);
             executorService.submit(robot);
         }
     }

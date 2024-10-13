@@ -1,6 +1,11 @@
 package se301.project;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import se301.project.factory.WarehouseFactory;
+import se301.project.warehouse.Warehouse;
 import se301.project.warehouse.WarehouseGood;
 
 import java.util.Map;
@@ -13,18 +18,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SingletonTest {
+    private static WarehouseFactory warehouseFactory;
+
+    @BeforeAll
+    public static void setUp() {
+        warehouseFactory = new WarehouseFactory();
+    }
 
     @Test
     public void testSingletonBehaviour_WhenGetInstance_ThenIsSameAsFirstGet() throws InterruptedException {
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
-        Map<Integer, WarehouseGood> map = new ConcurrentHashMap<>(threadCount);
+        Map<Integer, Warehouse> map = new ConcurrentHashMap<>(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             executorService.submit(() -> {
-                map.put(index, WarehouseGood.getInstance());
+                map.put(index, warehouseFactory.create("good"));
             });
         }
 
