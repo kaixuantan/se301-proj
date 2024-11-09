@@ -17,24 +17,9 @@ import java.util.concurrent.TimeUnit;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
-        // get args
-        if (args.length != 3) {
-            System.out.println("Usage: mvn exec:java -Dexec.mainClass=\"se301.project.Main\" -Dexec.args=\"<good | bad> <number of threads> <number of tasks per robot>\"");
-            System.out.println("Example: mvn exec:java -Dexec.mainClass=\"se301.project.Main\" -Dexec.args=\"good 50 5\"");
-            System.exit(1);
-        }
-
-        String warehouseType = args[0];
-        int threadCount;
-        int numTasksPerRobot;
-        try {
-            threadCount = Integer.parseInt(args[1]);
-            numTasksPerRobot = Integer.parseInt(args[2]);
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid arguments. Please provide a valid number for thread count and number of tasks per robot.");
-            System.exit(1);
-            return;
-        }
+        String warehouseType = "good";
+        int threadCount = 3;
+        int numTasksPerRobot = 3;
 
         Factory<Warehouse, String> warehouseFactory = new WarehouseFactory();
         Warehouse warehouse = warehouseFactory.create(warehouseType);
@@ -56,10 +41,10 @@ public class Main {
 
     private static void setUpWarehouse(Warehouse warehouse) {
         warehouse.clear();
-        warehouse.getInventory().put(1, new ShelfImpl(1, "ItemA", 1000));
-        warehouse.getInventory().put(2, new ShelfImpl(2, "ItemB", 500));
+        warehouse.getInventory().put(1, new ShelfImpl(1, "ItemA", 100));
+        warehouse.getInventory().put(2, new ShelfImpl(2, "ItemB", 100));
         warehouse.getInventory().put(3, new ShelfImpl(3, "ItemC", 100));
-        warehouse.getInventory().put(4, new ShelfImpl(4, "ItemD", 200));
+        warehouse.getInventory().put(4, new ShelfImpl(4, "ItemD", 100));
     }
 
     private static void setUpTasks(int threadCount, int numTasksPerRobot, ExecutorService executorService, Factory<Task, String> taskFactory) {

@@ -19,7 +19,7 @@ public class TaskFactory implements Factory<Task, String> {
             case "exchange":
                 return createExchangeTask(RANDOM.nextInt(4) + 1, RANDOM.nextInt(4) + 1);
             case "pick":
-                return createPickTask(RANDOM.nextInt(4) + 1, RANDOM.nextInt(10));
+                return createPickTask(RANDOM.nextInt(4) + 1, RANDOM.nextInt(30) + 1);
             case "random":
                 return createRandomTask();
             default:
@@ -39,7 +39,7 @@ public class TaskFactory implements Factory<Task, String> {
         int taskType = RANDOM.nextInt(2);
         switch (taskType) {
             case 0:
-                return new PickTask(RANDOM.nextInt(4) + 1, RANDOM.nextInt(10), warehouse);
+                return new PickTask(RANDOM.nextInt(4) + 1, RANDOM.nextInt(30) + 1, warehouse);
             case 1:
                 int shelfId1 = RANDOM.nextInt(4) + 1;
                 int shelfId2;

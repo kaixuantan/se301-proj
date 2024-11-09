@@ -7,7 +7,7 @@ public interface Shelf {
     Lock getWriteLock();
     Lock getReadLock();
 
-    boolean deductQty(int quantity);
+    String deductQty(int quantity);
 
     boolean putItem(String itemName, int quantity);
 

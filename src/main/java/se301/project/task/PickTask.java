@@ -20,11 +20,6 @@ public class PickTask implements Task {
     }
 
     // get the item from the shelf
-    boolean deducted = shelf.deductQty(quantity);
-    if (!deducted) {
-      throw new IllegalArgumentException("Item " + shelf.getItemName() + " is out of stock or insufficient quantity.");
-    } else {
-      return "Picked " + quantity + " of " + shelf.getItemName() + " from shelf " + shelfId;
-    }
+    return shelf.deductQty(quantity);
   }
 }
