@@ -15,7 +15,7 @@ public class Robot implements Runnable {
   @Override
   public void run() {
     for (Task task : taskQueue) {
-      System.out.println("Robot " + id + ": " +  task.execute());
+      task.execute();
     }
   }
 }

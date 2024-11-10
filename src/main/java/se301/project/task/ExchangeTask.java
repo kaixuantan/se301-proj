@@ -15,7 +15,7 @@ public class ExchangeTask implements Task {
     private final Warehouse warehouse;
 
     @Override
-    public String execute() {
+    public void execute() {
         Shelf shelfImpl1 = warehouse.getInventory().get(shelfId1);
         Shelf shelfImpl2 = warehouse.getInventory().get(shelfId2);
 
@@ -32,7 +32,7 @@ public class ExchangeTask implements Task {
             try {
                 secondShelf.getWriteLock().lock();
                 if (shelfImpl1 == null || shelfImpl2 == null) {
-                    return "Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.";
+                    System.out.println("Shelf " + shelfId1 + " or " + shelfId2 + " does not exist.");
                 }
 
                 // exchange the items between the shelves
@@ -41,11 +41,11 @@ public class ExchangeTask implements Task {
 
                 shelfImpl1.putItem(item2.keySet().iterator().next(), item2.values().iterator().next());
                 shelfImpl2.putItem(item1.keySet().iterator().next(), item1.values().iterator().next());
-                return "Swapped " + item1.values().iterator().next() + " of " + item1.keySet().iterator().next()
+                System.out.println("Swapped " + item1.values().iterator().next() + " of " + item1.keySet().iterator().next()
                         + " from shelf "
                         + shelfId1 + " with " + item2.values().iterator().next() + " of "
                         + item2.keySet().iterator().next()
-                        + " from shelf " + shelfId2;
+                        + " from shelf " + shelfId2);
             } finally {
                 secondShelf.getWriteLock().unlock();
             }

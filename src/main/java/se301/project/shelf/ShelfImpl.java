@@ -28,18 +28,18 @@ public class ShelfImpl implements Shelf {
   }
 
   @Override
-  public String deductQty(int quantity) {
+  public void deductQty(int quantity) {
     writeLock.lock();
     try {
       if (this.quantity < quantity) {
-        return itemName + " is out of stock or insufficient quantity.";
+        System.out.println(itemName + " is out of stock or insufficient quantity.");
 //        return false;
       }
 
       delay();
 
       this.quantity -= quantity;
-      return "Picked " + quantity + " of " + itemName + " from shelf " + shelfId;
+      System.out.println("Picked " + quantity + " of " + itemName + " from shelf " + shelfId);
     } finally {
       writeLock.unlock();
     }

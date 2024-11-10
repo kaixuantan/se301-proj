@@ -13,13 +13,13 @@ public class PickTask implements Task {
   private final Warehouse warehouse;
 
   @Override
-  public String execute() {
+  public void execute() {
     Shelf shelf = warehouse.getInventory().get(shelfId);
     if (shelf == null) {
-       return "Shelf " + shelfId + " does not exist.";
+      System.out.println("Shelf " + shelfId + " does not exist.");
     }
 
     // get the item from the shelf
-    return shelf.deductQty(quantity);
+    shelf.deductQty(quantity);
   }
 }
